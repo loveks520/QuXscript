@@ -1,0 +1,95 @@
+#include <SoftwareSerial.h> // 引用藍牙程式庫
+
+
+SoftwareSerial BT(0, 1); // 定義 RX, TX 接到 TX, RX
+
+#define S0 2
+#define S1 3
+#define S2 4
+#define S3 5
+#define OUT 6 讀取 TCS3200 的輸出信號
+
+#define LED_PIN 7 // 光源控制引腳
+
+// 定義馬達 A 的腳位
+#define MT_A_F 8 // 馬達 A 前進
+#define MT_A_R 9 // 馬達 A 後退
+
+// 定義馬達 B 的腳位
+#define MT_B_F 10 // 馬達 B 前進
+#define MT_B_R 11 // 馬達 B 後退
+
+int R, G, B = 0;
+
+
+// 根據 RGB 數值判斷顏色名稱的函式
+String getColorName(int R, int G, int B) {
+    if (R > G && R > B) return "紅色";
+    if (R < G && G > B) return "綠色";
+    if (R < B && G < B) return "藍色";
+    return "未知顏色"; // 無法匹配的情況
+}
+
+void motor_setup() {
+  // 設定馬達控制腳位為輸出
+  pinMode(MT_A_F, OUTPUT);
+  pinMode(MT_A_R, OUTPUT);
+  pinMode(MT_B_F, OUTPUT);
+  pinMode(MT_B_R, OUTPUT);
+
+  // 啟用序列通訊以連接藍牙模組
+  Serial.begin(9600); // 藍牙模組常用波特率
+}
+
+void motor_loop() {
+  // 檢查是否有來自藍牙的資料
+  if (Serial.available() > 0) {
+    char command = Serial.read(); // 讀取藍牙傳來的命令
+
+    // 根據接收到的命令控制馬達
+    switch (command) {
+      case 'F': // Forward 前進
+        digitalWrite(MT_A_F, HIGH);
+        digitalWrite(MT_A_R, LOW);
+        digitalWrite(MT_B_F, HIGH);
+        digitalWrite(MT_B_R, LOW);
+        break;
+
+      case 'B': // Backward 後退
+        digitalWrite(MT_A_F, LOW);
+        digitalWrite(MT_A_R, HIGH);
+        digitalWrite(MT_B_F, LOW);
+        digitalWrite(MT_B_R, HIGH);
+        break;
+
+      case 'L': // Left 左轉
+        digitalWrite(MT_A_F, LOW);
+        digitalWrite(MT_A_R, HIGH);
+        digitalWrite(MT_B_F, HIGH);
+        digitalWrite(MT_B_R, LOW);
+        break;
+
+      case 'R': // Right 右轉
+        digitalWrite(MT_A_F, HIGH);
+        digitalWrite(MT_A_R, LOW);
+        digitalWrite(MT_B_F, LOW);
+        digitalWrite(MT_B_R, HIGH);
+        break;
+
+      case 'S': // Stop 停止
+        digitalWrite(MT_A_F, LOW);
+        digitalWrite(MT_A_R, LOW);
+        digitalWrite(MT_B_F, LOW);
+        digitalWrite(MT_B_R, LOW);
+        break;
+
+      default:
+        // 未知指令，停止所有馬達
+        digitalWrite(MT_A_F, LOW);
+        digitalWrite(MT_A_R, LOW);
+        digitalWrite(MT_B_F, LOW);
+        digitalWrite(MT_B_R, LOW);
+        break;
+    }
+  }
+}
