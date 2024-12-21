@@ -93,3 +93,79 @@ void motor_loop() {
     }
   }
 }
+
+
+
+void setup() {
+    // 設定 TCS3200 引腳模式
+    pinMode(S0, OUTPUT);
+    pinMode(S1, OUTPUT);
+    pinMode(S2, OUTPUT);
+    pinMode(S3, OUTPUT);
+    pinMode(OUT, INPUT);
+
+    // 設定光源控制引腳模式
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, LOW); // 初始關閉光源
+
+    // 設定 TCS3200 輸出頻率比例為 20%
+    digitalWrite(S0, HIGH);
+    digitalWrite(S1, LOW);
+	
+	motor_setup();//init motor 
+	
+    BT.begin(9600); // 初始化藍牙
+    BT.println("BT is ready!");
+
+    // 初始化完成訊號
+    for (int i = 0; i < 5; i++) {
+        digitalWrite(LED_PIN, !digitalRead(LED_PIN)); // 光源閃爍
+        delay(250);
+    }
+    digitalWrite(LED_PIN, LOW); // 最後關閉光源
+	
+	
+}
+
+void loop() {
+    // 讀取 RGB 數據
+    digitalWrite(S2, LOW); digitalWrite(S3, LOW);
+    R = pulseIn(OUT, LOW);
+    delay(100);
+
+    digitalWrite(S2, HIGH); digitalWrite(S3, HIGH);
+    G = pulseIn(OUT, LOW);
+    delay(100);
+
+    digitalWrite(S2, LOW); digitalWrite(S3, HIGH);
+    B = pulseIn(OUT, LOW);
+    delay(100);
+
+    // 校正 RGB 數據
+    R = map(R, 0, 255, 255, 0); // 反轉數值範圍
+    G = map(G, 0, 255, 255, 0);
+    B = map(B, 0, 255, 255, 0);
+
+    // 限制範圍到 0-255
+    R = constrain(R, 0, 255);
+    G = constrain(G, 0, 255);
+    B = constrain(B, 0, 255);
+
+    // 輸出 RGB 色碼和中文顏色名稱
+    String colorHex = rgbToHex(R, G, B);
+    String colorName = getColorName(R, G, B);
+    BT.print("RGB: ");
+    BT.print(R);
+    BT.print(", ");
+    BT.print(G);
+    BT.print(", ");
+    BT.print(B);
+    BT.print(" | HEX: ");
+    BT.print(colorHex);
+    BT.print(" | 顏色: ");
+    BT.println(colorName);
+
+    
+	motor_loop();
+	delay(500); // 延遲進行下一次讀取
+}
