@@ -7,6 +7,6 @@ var body = $response.body; // 令 body 為響應體
 body = body.replace(/"isPerpetual"\s*:\s*false/g, '"isPerpetual": true');
 body = body.replace(/"expiredTime"\s*:\s*\d+/g, '"expiredTime": 2524579200000');
 body = body.replace(/"unactivatedAuthDays"\s*:\s*\d+/g, '"unactivatedAuthDays": 999');
-
+body = body.replace(/"hasAuthorization"\s*:\s*\w+/g, '"hasAuthorization": true');
 console.log(body);
 $done({ body });
