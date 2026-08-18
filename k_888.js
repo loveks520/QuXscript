@@ -4,8 +4,7 @@
 var body = $response.body;
 
 // 修改欄位數值
-body = body.replace(/"invest_experience"\s*:\s*\d+/g, '"invest_experience": 9');
-body = body.replace(/"subscription"\s*:\s*\d+/g, '"subscription": 9');
+body = body.replace(/"subscription"\s*:\s*\d+/g, '"subscription": 0');
 body = body.replace(/"is_socialite"\s*:\s*\d+/g, '"is_socialite": 10');
 
 console.log(body);
