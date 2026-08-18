@@ -1,10 +1,11 @@
 /*
 如果有結果就執行以下代碼
 */
-var body = $response.body; // 令 body 為響應體
+var body = $response.body;
 
-// 修改 subscription 欄位為 99
-body = body.replace(/"subscription"\s*:\s*\d+/g, '"subscription": 99');
+// 修改欄位數值
+body = body.replace(/"subscription"\s*:\s*\d+/g, '"subscription": 9');
+body = body.replace(/"is_socialite"\s*:\s*\d+/g, '"is_socialite": 10');
 
 console.log(body);
 $done({ body });
