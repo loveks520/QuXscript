@@ -1,11 +1,12 @@
 /*
-如果有結果就執行以下代碼
+優分析 一鍵全解鎖 (精簡版)
 */
 var body = $response.body;
 
-// 將 owned 與 ever_purchased 改為 1
-body = body.replace(/"owned"\s*:\s*\d+/g, '"owned": 1');
-body = body.replace(/"ever_purchased"\s*:\s*\d+/g, '"ever_purchased": 1');
+body = body.replace(/"free"\s*:\s*0/g, '"free": 1');
+body = body.replace(/"require_pay"\s*:\s*1/g, '"require_pay": 0');
+body = body.replace(/"owned"\s*:\s*0/g, '"owned": 1');
+body = body.replace(/"ever_purchased"\s*:\s*0/g, '"ever_purchased": 1');
+body = body.replace(/"subscription"\s*:\s*\d+/g, '"subscription": 99');
 
-console.log(body);
 $done({ body });
